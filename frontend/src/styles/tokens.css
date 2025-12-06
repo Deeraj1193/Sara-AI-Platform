@@ -1,0 +1,51 @@
+/* tokens.css — CLEAN, SAFE */
+
+:root {
+  --color-primary: #FAD4E8;
+  --color-secondary: #FFF6FA;
+  --color-accent: #D5E7FF;
+  --color-border: #F1C7D8;
+
+  --rightpanel-width: 420px;
+
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+
+  --radius-default: 20px;
+  --radius-full: 999px;
+
+  --input-height: 64px;
+  --topbar-height: 64px;
+}
+
+/* RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+/* SAFE GRADIENT BACKGROUND */
+body {
+  background: linear-gradient(
+    180deg,
+    #FFF6FB 0%,
+    #FAD4E8 40%,
+    #FFFFFF 100%
+  ) !important;
+
+  background-blend-mode: normal !important;
+  isolation: isolate !important;
+}

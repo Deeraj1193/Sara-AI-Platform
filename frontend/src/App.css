@@ -1,0 +1,74 @@
+@import './styles/tokens.css';
+
+/* ---------------------
+   Chat Bubble Animation
+---------------------- */
+@keyframes bubbleFadeIn {
+  0% { opacity: 0; transform: translateY(8px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Enhanced bubble entrance */
+@keyframes bubbleEnter {
+  0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  60% { opacity: 1; transform: translateY(2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Typing indicator */
+@keyframes typingPulse {
+  0% { opacity: 0.45; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.45; transform: scale(0.92); }
+}
+
+.dot {
+  animation: typingPulse 1.2s infinite ease-in-out;
+  font-size: 18px;
+  color: rgba(170,120,160,0.9);
+}
+
+/* ---------------------
+   Divider Shimmer
+---------------------- */
+@keyframes shimmerFlow {
+  0% { opacity: 0.08; transform: translateY(-10%); }
+  30% { opacity: 0.75; transform: translateY(25%); }
+  55% { opacity: 0.45; transform: translateY(60%); }
+  100% { opacity: 0.08; transform: translateY(-10%); }
+}
+
+/* ---------------------
+   Right Nav Hover Glow
+---------------------- */
+.nav-button {
+  transition: 0.25s ease;
+}
+
+.nav-button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(255,120,200,0.55);
+}
+
+/* ---------------------
+   Scrollbars
+---------------------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,240,250,0.45);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(250,180,220,0.65);
+  border-radius: 10px;
+  border: 2px solid rgba(255,240,250,0.4);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(250,170,215,0.85);
+}
