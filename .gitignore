@@ -1,0 +1,29 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node / React / Vite
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# TTS Models (massive)
+C:/Users/deera/AppData/Local/tts/
+tts_models/
+models/
+checkpoints/
+
+# Cache folders
+.DS_Store
+.cache/
+*.tmp
+
+# VS Code
+.vscode/
