@@ -159,18 +159,10 @@ SaraAI/
 
 ## 🖼️ Screenshots 
 
-After pushing to GitHub, upload your screenshots and replace these placeholders:
-
 ```md
 ## UI Preview
-![Chat UI](docs/screenshots/ui_full.png)
+<img width="1917" height="867" alt="image" src="https://github.com/user-attachments/assets/b0b3146d-27ee-4ddd-8b1e-11bfd3524ce6" />
 
-## Persona Editor
-![Persona Panel](docs/screenshots/persona_editor.png)
-
-## Memory Viewer
-![Memory System](docs/screenshots/memory_view.png)
-```
 
 ---
 
@@ -200,5 +192,6 @@ Core conversation, persona, memory, TTS, and full UI.
 
 * This assistant is meant for *local personal use only*.
 * No install steps included by design.
+
 
 ---
