@@ -159,10 +159,8 @@ SaraAI/
 
 ## 🖼️ Screenshots 
 
-```md
 ## UI Preview
-<img width="1917" height="867" alt="image" src="https://github.com/user-attachments/assets/b0b3146d-27ee-4ddd-8b1e-11bfd3524ce6" />
-
+<img width="1918" height="857" alt="image" src="https://github.com/user-attachments/assets/66743cdd-9d64-4362-871f-395e5a622cd6" />
 
 ---
 
@@ -195,3 +193,4 @@ Core conversation, persona, memory, TTS, and full UI.
 
 
 ---
+
