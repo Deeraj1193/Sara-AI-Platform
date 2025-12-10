@@ -1,11 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
-export default function ChatBubble({ sender, text, timestamp }) {
+export default function ChatBubble({ sender, text, timestamp, audio_url }) {
   const isUser = sender === "user";
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
+  /* ---------------------------------------------------------
+     AUTO-PLAY AUDIO WHEN SARA SENDS A MESSAGE
+  --------------------------------------------------------- */
+  useEffect(() => {
+    if (!isUser && audio_url) {
+      const audio = new Audio(audio_url);
+      audioRef.current = audio;
+
+      audio.onended = () => setIsPlaying(false);
+
+      setIsPlaying(true);
+      audio.play().catch(() => {
+        // Autoplay failed (browser restriction)
+        setIsPlaying(false);
+      });
+    }
+  }, [audio_url]);
+
+  /* ---------------------------------------------------------
+     PLAY / PAUSE BUTTON FOR MANUAL CONTROL
+  --------------------------------------------------------- */
+  const handlePlayClick = () => {
+    if (!audio_url) return;
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio(audio_url);
+    }
+
+    const audio = audioRef.current;
+
+    if (isPlaying) {
+      audio.pause();
+      audio.currentTime = 0;
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+      audio.onended = () => setIsPlaying(false);
+    }
+  };
+
+  /* ---------------------------------------------------------
+     BUBBLE STYLING
+  --------------------------------------------------------- */
   const bubbleStyle = {
     alignSelf: isUser ? "flex-end" : "flex-start",
     background: isUser ? "var(--color-accent)" : "var(--color-secondary)",
@@ -17,8 +63,12 @@ export default function ChatBubble({ sender, text, timestamp }) {
     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
     animation: "bubbleEnter 0.35s ease-out",
     whiteSpace: "pre-wrap",
+    position: "relative",
   };
 
+  /* ---------------------------------------------------------
+     CODE BLOCK COPY BUTTON
+  --------------------------------------------------------- */
   const CopyButton = ({ code }) => {
     const [copied, setCopied] = useState(false);
 
@@ -51,6 +101,9 @@ export default function ChatBubble({ sender, text, timestamp }) {
     );
   };
 
+  /* ---------------------------------------------------------
+     CODE BLOCK THEME
+  --------------------------------------------------------- */
   const lavenderTheme = {
     'code[class*="language-"], pre[class*="language-"]': {
       color: "#4A2A66",
@@ -63,6 +116,29 @@ export default function ChatBubble({ sender, text, timestamp }) {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={bubbleStyle}>
+        {/* ----------------- PLAY BUTTON (ONLY FOR SARA) ----------------- */}
+        {!isUser && audio_url && (
+          <button
+            onClick={handlePlayClick}
+            style={{
+              position: "absolute",
+              bottom: "-10px",
+              right: "-10px",
+              background: "#fff",
+              border: "1px solid #D8B8FF",
+              borderRadius: "50%",
+              width: "34px",
+              height: "34px",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              fontSize: "16px",
+            }}
+          >
+            {isPlaying ? "⏸" : "🔊"}
+          </button>
+        )}
+
+        {/* ----------------- MARKDOWN CONTENT ----------------- */}
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
@@ -113,6 +189,7 @@ export default function ChatBubble({ sender, text, timestamp }) {
         </ReactMarkdown>
       </div>
 
+      {/* ----------------- TIMESTAMP ----------------- */}
       <div
         style={{
           marginTop: "4px",

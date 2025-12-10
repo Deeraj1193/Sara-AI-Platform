@@ -1,29 +1,35 @@
 # Python
-venv/
 __pycache__/
 *.pyc
+*.pyo
 
-# Node / React / Vite
-node_modules/
+# Virtual environment
+venv/
+
+# Local database
+memory.db
+
+# Audio cache
+backend/audio_cache/
+
+# Ollama / model caches (if any)
+*.bin
+*.pth
+*.pt
+
+# Node modules
+frontend/node_modules/
+
+# Build outputs
 dist/
 build/
-
-# Environment
-.env
 
 # Logs
 *.log
 
-# TTS Models (massive)
-C:/Users/deera/AppData/Local/tts/
-tts_models/
-models/
-checkpoints/
-
-# Cache folders
+# System files
 .DS_Store
-.cache/
-*.tmp
+Thumbs.db
 
-# VS Code
-.vscode/
+# Shortcuts
+*.lnk

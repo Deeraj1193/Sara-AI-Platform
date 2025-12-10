@@ -1,5 +1,8 @@
 const API_BASE = "http://127.0.0.1:8000";
 
+/* ---------------------------------------------------------
+   SEND MESSAGE TO BACKEND (NOW RETURNS audio_url TOO)
+--------------------------------------------------------- */
 export async function sendMessage(text, sessionId = "default") {
   try {
     const res = await fetch(`${API_BASE}/api/chat`, {
@@ -7,14 +10,26 @@ export async function sendMessage(text, sessionId = "default") {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text, session_id: sessionId }),
     });
-    return await res.json();
+
+    const data = await res.json();
+
+    return {
+      reply: data.reply,
+      memory_update: data.memory_update,
+      audio_url: data.audio_url || null,
+    };
   } catch (err) {
-    return { reply: "[ERROR] Backend unavailable", memory_update: false };
+    return {
+      reply: "[ERROR] Backend unavailable",
+      memory_update: false,
+      audio_url: null,
+    };
   }
 }
 
-/* -------- PERSONA CONFIG API -------- */
-
+/* ---------------------------------------------------------
+   PERSONA SAVE
+--------------------------------------------------------- */
 export async function savePersonaConfig(cfg) {
   const res = await fetch(`${API_BASE}/api/persona`, {
     method: "POST",
@@ -24,6 +39,9 @@ export async function savePersonaConfig(cfg) {
   return await res.json();
 }
 
+/* ---------------------------------------------------------
+   PERSONA LOAD
+--------------------------------------------------------- */
 export async function fetchPersonaConfig() {
   const res = await fetch(`${API_BASE}/api/persona`);
   if (!res.ok) return null;

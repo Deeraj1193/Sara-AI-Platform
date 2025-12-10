@@ -14,7 +14,7 @@ import { sendMessage } from "../api/saraApi";
 function MainLayout() {
   const [activePanel, setActivePanel] = useState("memory");
 
-  // Initial demo messages
+  // Messages
   const [messages, setMessages] = useState([
     { sender: "sara", text: "Hello! I'm Sara.", timestamp: "10:01" },
     { sender: "user", text: "Hi Sara, this looks nice!", timestamp: "10:01" },
@@ -26,9 +26,9 @@ function MainLayout() {
 
   const chatEndRef = useRef(null);
 
-  // ----------------------------------------------------
-  // SMART SCROLL: only scroll after messages settle
-  // ----------------------------------------------------
+  // 🔊 NEW: audio player ref
+  const audioRef = useRef(null);
+
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -39,8 +39,9 @@ function MainLayout() {
     }
   }, [messages, isTyping]);
 
+
   // ----------------------------------------------------
-  // SEND MESSAGE (NON-STREAMING)
+  // SEND MESSAGE (NON-STREAMING) — UPDATED TO HANDLE AUDIO
   // ----------------------------------------------------
   const handleSendMessage = async (text) => {
     if (!text.trim()) return;
@@ -50,13 +51,12 @@ function MainLayout() {
       minute: "2-digit",
     });
 
-    // Add user message immediately
+    // Add USER message
     setMessages((prev) => [
       ...prev,
       { sender: "user", text, timestamp },
     ]);
 
-    // Show typing indicator
     setIsTyping(true);
 
     // Call backend
@@ -64,24 +64,34 @@ function MainLayout() {
 
     setIsTyping(false);
 
-    // Add Sara reply
+    const saraTimestamp = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    // Add SARA message
     setMessages((prev) => [
       ...prev,
       {
         sender: "sara",
         text: response.reply || "[No reply]",
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        timestamp: saraTimestamp,
+        audio_url: response.audio_url || null,   // ⚡ NEW
       },
     ]);
 
-    // Refresh memory panel
+    // 🔊 Auto play TTS audio if available
+    if (response.audio_url && audioRef.current) {
+      audioRef.current.src = `http://127.0.0.1:8000${response.audio_url}`;
+      audioRef.current.play().catch(() => {});
+    }
+
+    // Memory update
     if (response.memory_update) {
       setMemoryRefreshKey((prev) => prev + 1);
     }
   };
+
 
   return (
     <div
@@ -95,6 +105,9 @@ function MainLayout() {
       }}
     >
       <PinkGlow />
+
+      {/* 🔊 Invisible audio player */}
+      <audio ref={audioRef} hidden />
 
       <div
         style={{
@@ -119,7 +132,7 @@ function MainLayout() {
           <TopBar />
         </div>
 
-        {/* MAIN LAYOUT */}
+        {/* MAIN */}
         <div
           style={{
             flex: 1,
@@ -128,6 +141,7 @@ function MainLayout() {
             marginTop: "var(--topbar-height)",
           }}
         >
+
           {/* LEFT CHAT COLUMN */}
           <div
             style={{
@@ -142,7 +156,8 @@ function MainLayout() {
               position: "relative",
             }}
           >
-            {/* Divider shimmer */}
+
+            {/* SHIMMER */}
             <div
               style={{
                 position: "absolute",
@@ -169,9 +184,9 @@ function MainLayout() {
                 paddingRight: "10px",
               }}
             >
-              {messages.map((msg, index) => (
+              {messages.map((msg, i) => (
                 <ChatBubble
-                  key={index}
+                  key={i}
                   sender={msg.sender}
                   text={msg.text}
                   timestamp={msg.timestamp}
