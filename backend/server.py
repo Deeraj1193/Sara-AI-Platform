@@ -1,21 +1,27 @@
-# server.py
+# backend/server.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .brain import generate_reply, generate_stream, list_all_memories
+# NEW Pipeline import (correct package path)
+from backend.core.pipeline import Pipeline
+
+# Persona store (still old system — OK until Step 31 cleanup)
 from .persona_store import get_persona, set_persona
 
-# Correct Kokoro import (matches your kokoro_tts.py)
+# Kokoro TTS (unchanged)
 from .tts.kokoro_tts import kokoro
 
 import base64
 import os
 from pathlib import Path
 
+
 app = FastAPI(title="Sara API")
+pipeline = Pipeline()
+
 
 # ----------------------------------------------------------
 # CORS SETTINGS
@@ -35,8 +41,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # ----------------------------------------------------------
-# Ensure audio folder exists and mount it
+# AUDIO SETUP
 # ----------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent
 AUDIO_DIR = BASE_DIR / "audio_cache"
@@ -50,7 +57,7 @@ class ChatRequest(BaseModel):
 
 
 # ----------------------------------------------------------
-# Persona GET/POST
+# PERSONA GET/POST
 # ----------------------------------------------------------
 @app.get("/api/persona")
 async def api_get_persona():
@@ -64,7 +71,7 @@ async def api_set_persona(cfg: dict):
 
 
 # ----------------------------------------------------------
-# Helper: save base64 → wav file
+# SAVE WAV FROM BASE64
 # ----------------------------------------------------------
 def save_wav_base64(b64: str) -> str:
     raw = base64.b64decode(b64)
@@ -76,12 +83,16 @@ def save_wav_base64(b64: str) -> str:
 
 
 # ----------------------------------------------------------
-# NON-STREAMING CHAT (now returns audio_url)
+# NON-STREAM CHAT
 # ----------------------------------------------------------
 @app.post("/api/chat")
 async def api_chat(req: ChatRequest):
-    reply, memory_flag = generate_reply(req.message)
 
+    result = pipeline.handle_message(req.message, req.session_id)
+    reply = result["reply"]
+    memory_flag = result["memory_update"]
+
+    # TTS
     audio_url = None
     try:
         b64 = kokoro.synthesize_base64(reply, speed=1.0)
@@ -90,11 +101,16 @@ async def api_chat(req: ChatRequest):
     except Exception:
         audio_url = None
 
-    return {"reply": reply, "audio_url": audio_url, "memory_update": memory_flag}
+    return {
+        "reply": reply,
+        "audio_url": audio_url,
+        "memory_update": memory_flag,
+        "model_used": result.get("model_used", "unknown"),
+    }
 
 
 # ----------------------------------------------------------
-# Dedicated TTS endpoint
+# TTS ONLY
 # ----------------------------------------------------------
 @app.post("/api/tts")
 async def api_tts(payload: dict):
@@ -102,7 +118,7 @@ async def api_tts(payload: dict):
     speed = float(payload.get("speed", 1.0))
 
     if not text:
-        return {"error": "Missing 'text' field."}
+        return {"error": "Missing 'text' field"}
 
     try:
         b64 = kokoro.synthesize_base64(text, speed=speed)
@@ -113,11 +129,14 @@ async def api_tts(payload: dict):
 
 
 # ----------------------------------------------------------
-# STREAMING CHAT
+# STREAM CHAT ENDPOINT
 # ----------------------------------------------------------
 @app.post("/api/chat_stream")
 async def chat_stream(req: ChatRequest):
-    token_generator, memory_flag = generate_stream(req.message)
+
+    token_generator, memory_flag = pipeline.handle_stream(
+        req.message, req.session_id
+    )
 
     async def event_stream():
         try:
@@ -130,14 +149,8 @@ async def chat_stream(req: ChatRequest):
 
 
 # ----------------------------------------------------------
-# MEMORY ENDPOINT
+# ROOT CHECK
 # ----------------------------------------------------------
-@app.get("/api/memory")
-async def api_memory():
-    items = list_all_memories()
-    return {"items": [{"id": i, "text": t} for i, t in items]}
-
-
 @app.get("/")
 async def root():
     return {"status": "Sara API running"}
