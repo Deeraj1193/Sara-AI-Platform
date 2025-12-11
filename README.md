@@ -1,12 +1,3 @@
-Nice catch — thanks for pointing that out. I pulled the official project roadmap you uploaded and updated the README so the roadmap section now exactly matches the source roadmap in your project. 
-
-Below is the **corrected README (v1.5)** — I replaced the earlier roadmap with the one from your uploaded roadmap file. Paste this over your README.md (or let me know if you want me to open a temp file for you).
-
----
-
-# ⭐ **UPDATED README.md — Sara AI (v1.5)**
-
-````md
 # Sara AI — Local Assistant (v1.5)
 
 Sara AI is a fully local personal assistant featuring:
@@ -238,3 +229,4 @@ Say one of:
 - **“make CHANGELOG.md and commit”** — I’ll provide changelog content and the commands.
 - **“not yet”** — I’ll wait.
 ```
+
