@@ -191,7 +191,7 @@ SaraAI/
 
 ---
 
-## 🚀 Roadmap (official from project document)
+## 🚀 Roadmap 
 
 This README references the project roadmap file for exact milestone definitions (see project docs). Summary below:
 
@@ -203,8 +203,6 @@ This README references the project roadmap file for exact milestone definitions 
 * **v3.5 — PNG avatar & UI redesign** (static avatar + emotion variants)
 * **v4.0 — Live2D integration & streaming (VTuber)** (rigging, mouth-sync, OBS integration)
 
-(Full roadmap sourced from project roadmap file.) 
-
 ---
 
 ## ⚠️ Notes
@@ -212,21 +210,5 @@ This README references the project roadmap file for exact milestone definitions 
 * This assistant is for **local personal use**.
 * No installation script is included by design.
 
-```
 
----
-
-I updated the roadmap to match your uploaded roadmap exactly and added the citation so anyone reading the README knows the source. :contentReference[oaicite:2]{index=2}
-
-Next step if you want to finalize the release:
-
-- I can provide the exact git commands to commit README and push the v1.5 tag.
-- Or I can make a small CHANGELOG.md (optional).
-
-Say one of:
-
-- **“commit and tag v1.5”** — I’ll give the git commands and a commit message.
-- **“make CHANGELOG.md and commit”** — I’ll provide changelog content and the commands.
-- **“not yet”** — I’ll wait.
-```
 
